@@ -5,9 +5,9 @@ import * as rds from '@aws-cdk/aws-rds';
 import * as discovery from '@aws-cdk/aws-servicediscovery';
 import * as cdk from '@aws-cdk/core';
 
-import { KeycloakDatabaseVendor, KeycloakFargateTaskDefinition } from '../index';
+import { KeycloakDatabaseVendor, KeycloakFargateTaskDefinition, VpcProvider } from '../index';
 
-export interface IntegFargateStackPops {
+export interface IntegFargateStackPops extends cdk.StackProps {
   databaseInstanceEngine: rds.IInstanceEngine;
 }
 
@@ -16,12 +16,13 @@ export interface IntegFargateStackPops {
  * @internal
  */
 export class IntegFargateStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props: IntegFargateStackPops) {
-    super(scope, id);
+  constructor(scope: cdk.Construct, id: string, props: cdk.StackProps = { }) {
+    super(scope, id, props);
 
-    const databaseEngine = props.databaseInstanceEngine;
+    const vpcProvider = VpcProvider.ingressAndPrivateDbVpc();
+    const vpcInfo = vpcProvider._provideVpcInfo(this);
 
-    const vpc = new ec2.Vpc(this, 'Vpc', {
+    /* const vpc = new ec2.Vpc(this, 'Vpc', {
       subnetConfiguration: [
         {
           name: 'public',
@@ -29,14 +30,14 @@ export class IntegFargateStack extends cdk.Stack {
           subnetType: ec2.SubnetType.PUBLIC,
         },
       ],
-    });
+    }); */
 
     const cluster = new ecs.Cluster(this, 'Cluster', {
-      vpc: vpc,
+      vpc: vpcInfo.vpc,
       defaultCloudMapNamespace: {
         name: this.stackName,
         type: discovery.NamespaceType.DNS_PRIVATE,
-        vpc: vpc,
+        vpc: vpcInfo.vpc,
       },
     });
 
@@ -54,7 +55,7 @@ export class IntegFargateStack extends cdk.Stack {
       },
     ];
 
-    const db = new rds.DatabaseInstance(this, 'DB', {
+    /* const db = new rds.DatabaseInstance(this, 'DB', {
       engine: databaseEngine,
       instanceType: ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE2, ec2.InstanceSize.MICRO),
       publiclyAccessible: true,
@@ -64,6 +65,21 @@ export class IntegFargateStack extends cdk.Stack {
       },
     });
 
+    if (!db.secret) {
+      throw new Error('RDS did not provide a secret');
+    } */
+
+    const db = new rds.ServerlessCluster(this, 'DB', {
+      vpc: vpcInfo.vpc,
+      engine: rds.DatabaseClusterEngine.auroraMysql({
+        version: rds.AuroraMysqlEngineVersion.VER_5_7_12,
+      }),
+      scaling: {
+        autoPause: cdk.Duration.minutes(5),
+        minCapacity: rds.AuroraCapacityUnit.ACU_1,
+        maxCapacity: rds.AuroraCapacityUnit.ACU_1,
+      },
+    });
     if (!db.secret) {
       throw new Error('RDS did not provide a secret');
     }
@@ -115,7 +131,13 @@ export class IntegFargateStack extends cdk.Stack {
   }
 }
 
+const devEnv = {
+  //account: process.env.CDK_DEFAULT_ACCOUNT,
+  //region: process.env.CDK_DEFAULT_REGION,
+  account: '037729278610',
+  region: 'ap-northeast-2',
+  availabilityZones: ['ap-northeast-2a', 'ap-northeast-2c'],
+};
+
 const app = new cdk.App();
-new IntegFargateStack(app, 'integ-fargate-stack', {
-  databaseInstanceEngine: rds.DatabaseInstanceEngine.mysql({ version: rds.MysqlEngineVersion.VER_8_0 }),
-});
+new IntegFargateStack(app, 'integ-fargate-stack', { env: devEnv } );

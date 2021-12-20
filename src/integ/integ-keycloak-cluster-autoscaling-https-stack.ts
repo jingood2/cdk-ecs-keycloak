@@ -3,8 +3,8 @@ import * as cdk from '@aws-cdk/core';
 import * as keycloak from '../index';
 
 export class IntegKeycloakAutoScalingHttpsStack extends cdk.Stack {
-  constructor(scope: cdk.Construct) {
-    super(scope, 'integ-keycloak-cluster-autoscaling-https');
+  constructor(scope: cdk.Construct, props: cdk.StackProps = { }) {
+    super(scope, 'integ-keycloak-cluster-autoscaling-https', props);
 
     const certificateArn = scope.node.tryGetContext('CERTIFICATE_ARN') ?? 'PRETEND';
     const certificate = acm.Certificate.fromCertificateArn(this, 'Certificate', certificateArn);
@@ -43,5 +43,14 @@ export class IntegKeycloakAutoScalingHttpsStack extends cdk.Stack {
   }
 }
 
+// for development, use account/region from cdk cli
+const devEnv = {
+  //account: process.env.CDK_DEFAULT_ACCOUNT,
+  //region: process.env.CDK_DEFAULT_REGION,
+  account: '037729278610',
+  region: 'ap-northeast-2',
+  availabilityZones: ['ap-northeast-2a', 'ap-northeast-2c'],
+};
+
 const app = new cdk.App();
-new IntegKeycloakAutoScalingHttpsStack(app);
+new IntegKeycloakAutoScalingHttpsStack(app, { env: devEnv });

@@ -14,6 +14,7 @@ export class IntegKeycloakClusterDbInstanceStack extends cdk.Stack {
         }),
         instanceType: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.MICRO),
       }),
+      desiredCount: 3,
     });
   }
 }

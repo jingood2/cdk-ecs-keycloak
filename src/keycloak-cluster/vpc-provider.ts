@@ -45,6 +45,10 @@ export abstract class VpcProvider {
   static ingressAndPrivateVpc(): IVpcInfoProvider {
     return new IngressAndPrivateVpcProvider();
   }
+
+  static ingressAndPrivateDbVpc(): IVpcInfoProvider {
+    return new IngressAndPrivateVpcProvider();
+  }
 }
 
 /**
@@ -92,6 +96,44 @@ export class IngressAndPrivateVpcProvider implements IVpcInfoProvider {
           name: 'private',
           cidrMask: 21,
           subnetType: ec2.SubnetType.PRIVATE,
+        },
+      ],
+    });
+
+    return {
+      vpc,
+    };
+  }
+}
+
+export class IngressAndPrivateVpc2Provider implements IVpcInfoProvider {
+  /**
+   * @internal
+   */
+  _provideVpcInfo(scope: cdk.Construct): VpcInfo {
+
+    const natGatewayProvider = ec2.NatProvider.instance({
+      instanceType: new ec2.InstanceType('t3.small'),
+    });
+
+    const vpc = new ec2.Vpc(scope, 'Vpc', {
+      natGatewayProvider,
+      natGateways: 1,
+      subnetConfiguration: [
+        {
+          name: 'public',
+          cidrMask: 24,
+          subnetType: ec2.SubnetType.PUBLIC,
+        },
+        {
+          name: 'private',
+          cidrMask: 21,
+          subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
+        },
+        {
+          name: 'db',
+          cidrMask: 24,
+          subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
         },
       ],
     });

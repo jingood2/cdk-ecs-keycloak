@@ -12,10 +12,16 @@ import { IntegKeycloakClusterPostgresStack } from '../../src/integ/integ-keycloa
 import { IntegKeycloakClusterSimplestStack } from '../../src/integ/integ-keycloak-cluster-simplest-stack';
 import { IntegKeycloakClusterSpotStack } from '../../src/integ/integ-keycloak-cluster-spot-stack';
 
+const env = {
+  account: process.env.CDK_DEFAULT_ACCOUNT,
+  region: process.env.CDK_DEFAULT_REGION,
+};
+
 test('ec2-stack', () => {
   const app = new cdk.App();
   const stack = new IntegEc2Stack(app, 'integ-ec2', {
-    databaseInstanceEngine: rds.DatabaseInstanceEngine.mysql({ version: rds.MysqlEngineVersion.VER_8_0 }),
+    env: env,
+    databaseInstanceEngine: rds.DatabaseInstanceEngine.mysql({ version: rds.MysqlEngineVersion.VER_5_7_34 }),
   });
 
   expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
@@ -24,7 +30,7 @@ test('ec2-stack', () => {
 test('fargate-stack', () => {
   const app = new cdk.App();
   const stack = new IntegFargateStack(app, 'integ-fargate', {
-    databaseInstanceEngine: rds.DatabaseInstanceEngine.mysql({ version: rds.MysqlEngineVersion.VER_8_0 }),
+    //databaseInstanceEngine: rds.DatabaseInstanceEngine.mysql({ version: rds.MysqlEngineVersion.VER_5_7_34}),
   });
 
   expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();

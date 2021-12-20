@@ -1,12 +1,12 @@
 const { AwsCdkConstructLibrary, DependenciesUpgradeMechanism } = require('projen');
 
 const project = new AwsCdkConstructLibrary({
-  author: 'Josh Kellendonk',
-  authorAddress: 'joshkellendonk@gmail.com',
-  cdkVersion: '1.73.0',
+  author: 'Kim Jinyoung',
+  authorAddress: 'jingood2@gmail.com',
+  cdkVersion: '1.124.0',
   jsiiFqn: 'projen.AwsCdkConstructLibrary',
-  name: '@wheatstalk/cdk-ecs-keycloak',
-  repository: 'https://github.com/misterjoshua/cdk-ecs-keycloak.git',
+  name: '@jingood2/cdk-ecs-keycloak',
+  repository: 'https://github.com/jingood2/cdk-ecs-keycloak.git',
 
   keywords: [
     'ecs',

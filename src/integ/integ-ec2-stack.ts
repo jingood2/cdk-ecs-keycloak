@@ -8,7 +8,7 @@ import * as cdk from '@aws-cdk/core';
 
 import { KeycloakDatabaseVendor, KeycloakEc2TaskDefinition } from '../index';
 
-export interface IntegEc2StackProps {
+export interface IntegEc2StackProps extends cdk.StackProps {
   databaseInstanceEngine: rds.IInstanceEngine;
 }
 

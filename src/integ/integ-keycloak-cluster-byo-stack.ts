@@ -5,10 +5,17 @@ import * as cdk from '@aws-cdk/core';
 import * as keycloak from '..';
 
 export class IntegKeycloakClusterBYOStack extends cdk.Stack {
-  constructor(scope: cdk.Construct) {
-    super(scope, 'integ-keycloak-cluster-byo');
+  constructor(scope: cdk.Construct, props: cdk.StackProps = { }) {
+    super(scope, 'integ-keycloak-cluster-byo', props );
 
+    /* const natGatewayProvider = ec2.NatProvider.instance({
+      instanceType: new ec2.InstanceType('t3.micro'),
+    });
+ */
     const vpc = new ec2.Vpc(this, 'Vpc', {
+      //natGatewayProvider,
+      natGateways: 1,
+      maxAzs: 2,
       subnetConfiguration: [
         {
           name: 'ingress',
@@ -67,6 +74,7 @@ export class IntegKeycloakClusterBYOStack extends cdk.Stack {
         // as the Keycloak tasks can connect to the database)
         connectable: rdsDb,
       }),
+      desiredCount: 3,
       // Bring your own load balancer
       httpPortPublisher: keycloak.PortPublisher.addTarget({
         // Your load balancer listener
@@ -82,5 +90,14 @@ export class IntegKeycloakClusterBYOStack extends cdk.Stack {
   }
 }
 
+// for development, use account/region from cdk cli
+const devEnv = {
+  //account: process.env.CDK_DEFAULT_ACCOUNT,
+  //region: process.env.CDK_DEFAULT_REGION,
+  account: '037729278610',
+  region: 'ap-northeast-2',
+  availabilityZones: ['ap-northeast-2a', 'ap-northeast-2c'],
+};
+
 const app = new cdk.App();
-new IntegKeycloakClusterBYOStack(app);
+new IntegKeycloakClusterBYOStack(app, { env: devEnv });

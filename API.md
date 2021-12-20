@@ -20,6 +20,7 @@ Name|Description
 [HttpListenerProvider](#wheatstalk-cdk-ecs-keycloak-httplistenerprovider)|Creates a load balancer and an HTTP load balancer.
 [HttpsAlbPortPublisher](#wheatstalk-cdk-ecs-keycloak-httpsalbportpublisher)|Creates an application load balancer and an HTTPS listener with the given ACM certificates.
 [HttpsListenerProvider](#wheatstalk-cdk-ecs-keycloak-httpslistenerprovider)|Creates an application load balancer and an HTTPS listener with the given ACM certificates.
+[IngressAndPrivateVpc2Provider](#wheatstalk-cdk-ecs-keycloak-ingressandprivatevpc2provider)|*No description*
 [IngressAndPrivateVpcProvider](#wheatstalk-cdk-ecs-keycloak-ingressandprivatevpcprovider)|Provides a VPC with both private and public subnets.
 [KeycloakCluster](#wheatstalk-cdk-ecs-keycloak-keycloakcluster)|A complete Keycloak cluster in a box.
 [KeycloakContainerExtension](#wheatstalk-cdk-ecs-keycloak-keycloakcontainerextension)|Adds a keycloak container to a task definition.
@@ -573,6 +574,25 @@ new HttpsListenerProvider(props: HttpsListenerProviderProps)
 
 
 
+## class IngressAndPrivateVpc2Provider  <a id="wheatstalk-cdk-ecs-keycloak-ingressandprivatevpc2provider"></a>
+
+
+
+__Implements__: [IVpcInfoProvider](#wheatstalk-cdk-ecs-keycloak-ivpcinfoprovider)
+
+### Initializer
+
+
+
+
+```ts
+new IngressAndPrivateVpc2Provider()
+```
+
+
+
+
+
 ## class IngressAndPrivateVpcProvider  <a id="wheatstalk-cdk-ecs-keycloak-ingressandprivatevpcprovider"></a>
 
 Provides a VPC with both private and public subnets.
@@ -761,7 +781,7 @@ new KeycloakEc2TaskDefinition(scope: Construct, id: string, props?: KeycloakEc2T
 * **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  *No description*
 * **id** (<code>string</code>)  *No description*
 * **props** (<code>[KeycloakEc2TaskDefinitionProps](#wheatstalk-cdk-ecs-keycloak-keycloakec2taskdefinitionprops)</code>)  *No description*
-  * **executionRole** (<code>[IRole](#aws-cdk-aws-iam-irole)</code>)  The name of the IAM task execution role that grants the ECS agent to call AWS APIs on your behalf. __*Default*__: An execution role will be automatically created if you use ECR images in your task definition.
+  * **executionRole** (<code>[IRole](#aws-cdk-aws-iam-irole)</code>)  The name of the IAM task execution role that grants the ECS agent permission to call AWS APIs on your behalf. __*Default*__: An execution role will be automatically created if you use ECR images in your task definition.
   * **family** (<code>string</code>)  The name of a family that this task definition is registered to. __*Default*__: Automatically generated name.
   * **proxyConfiguration** (<code>[ProxyConfiguration](#aws-cdk-aws-ecs-proxyconfiguration)</code>)  The configuration details for the App Mesh proxy. __*Default*__: No proxy configuration.
   * **taskRole** (<code>[IRole](#aws-cdk-aws-iam-irole)</code>)  The name of the IAM role that grants containers in the task permission to call AWS APIs on your behalf. __*Default*__: A task role is automatically created for you.
@@ -832,12 +852,13 @@ new KeycloakFargateTaskDefinition(scope: Construct, id: string, props?: Keycloak
 * **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  *No description*
 * **id** (<code>string</code>)  *No description*
 * **props** (<code>[KeycloakFargateTaskDefinitionProps](#wheatstalk-cdk-ecs-keycloak-keycloakfargatetaskdefinitionprops)</code>)  *No description*
-  * **executionRole** (<code>[IRole](#aws-cdk-aws-iam-irole)</code>)  The name of the IAM task execution role that grants the ECS agent to call AWS APIs on your behalf. __*Default*__: An execution role will be automatically created if you use ECR images in your task definition.
+  * **executionRole** (<code>[IRole](#aws-cdk-aws-iam-irole)</code>)  The name of the IAM task execution role that grants the ECS agent permission to call AWS APIs on your behalf. __*Default*__: An execution role will be automatically created if you use ECR images in your task definition.
   * **family** (<code>string</code>)  The name of a family that this task definition is registered to. __*Default*__: Automatically generated name.
   * **proxyConfiguration** (<code>[ProxyConfiguration](#aws-cdk-aws-ecs-proxyconfiguration)</code>)  The configuration details for the App Mesh proxy. __*Default*__: No proxy configuration.
   * **taskRole** (<code>[IRole](#aws-cdk-aws-iam-irole)</code>)  The name of the IAM role that grants containers in the task permission to call AWS APIs on your behalf. __*Default*__: A task role is automatically created for you.
   * **volumes** (<code>Array<[Volume](#aws-cdk-aws-ecs-volume)></code>)  The list of volume definitions for the task. __*Default*__: No volumes are passed to the Docker daemon on a container instance.
   * **cpu** (<code>number</code>)  The number of cpu units used by the task. __*Default*__: 256
+  * **ephemeralStorageGiB** (<code>number</code>)  The amount (in GiB) of ephemeral storage to be allocated to the task. __*Default*__: 20
   * **memoryLimitMiB** (<code>number</code>)  The amount (in MiB) of memory used by the task. __*Default*__: 512
   * **keycloak** (<code>[KeycloakContainerExtensionProps](#wheatstalk-cdk-ecs-keycloak-keycloakcontainerextensionprops)</code>)  Keycloak configuration. __*Optional*__
 
@@ -1185,6 +1206,18 @@ static fromVpc(vpc: IVpc): IVpcInfoProvider
 __Returns__:
 * <code>[IVpcInfoProvider](#wheatstalk-cdk-ecs-keycloak-ivpcinfoprovider)</code>
 
+#### *static* ingressAndPrivateDbVpc() <a id="wheatstalk-cdk-ecs-keycloak-vpcprovider-ingressandprivatedbvpc"></a>
+
+
+
+```ts
+static ingressAndPrivateDbVpc(): IVpcInfoProvider
+```
+
+
+__Returns__:
+* <code>[IVpcInfoProvider](#wheatstalk-cdk-ecs-keycloak-ivpcinfoprovider)</code>
+
 #### *static* ingressAndPrivateVpc() <a id="wheatstalk-cdk-ecs-keycloak-vpcprovider-ingressandprivatevpc"></a>
 
 Provides a VPC with a public subnet and private subnet config.
@@ -1473,8 +1506,8 @@ Publishes container ports.
 
 ## interface IVpcInfoProvider  <a id="wheatstalk-cdk-ecs-keycloak-ivpcinfoprovider"></a>
 
-__Implemented by__: [FromVpcProvider](#wheatstalk-cdk-ecs-keycloak-fromvpcprovider), [IngressAndPrivateVpcProvider](#wheatstalk-cdk-ecs-keycloak-ingressandprivatevpcprovider)
-__Obtainable from__: [VpcProvider](#wheatstalk-cdk-ecs-keycloak-vpcprovider).[fromExistingVpc](#wheatstalk-cdk-ecs-keycloak-vpcprovider#wheatstalk-cdk-ecs-keycloak-vpcprovider-fromexistingvpc)(), [VpcProvider](#wheatstalk-cdk-ecs-keycloak-vpcprovider).[fromVpc](#wheatstalk-cdk-ecs-keycloak-vpcprovider#wheatstalk-cdk-ecs-keycloak-vpcprovider-fromvpc)(), [VpcProvider](#wheatstalk-cdk-ecs-keycloak-vpcprovider).[ingressAndPrivateVpc](#wheatstalk-cdk-ecs-keycloak-vpcprovider#wheatstalk-cdk-ecs-keycloak-vpcprovider-ingressandprivatevpc)()
+__Implemented by__: [FromVpcProvider](#wheatstalk-cdk-ecs-keycloak-fromvpcprovider), [IngressAndPrivateVpc2Provider](#wheatstalk-cdk-ecs-keycloak-ingressandprivatevpc2provider), [IngressAndPrivateVpcProvider](#wheatstalk-cdk-ecs-keycloak-ingressandprivatevpcprovider)
+__Obtainable from__: [VpcProvider](#wheatstalk-cdk-ecs-keycloak-vpcprovider).[fromExistingVpc](#wheatstalk-cdk-ecs-keycloak-vpcprovider#wheatstalk-cdk-ecs-keycloak-vpcprovider-fromexistingvpc)(), [VpcProvider](#wheatstalk-cdk-ecs-keycloak-vpcprovider).[fromVpc](#wheatstalk-cdk-ecs-keycloak-vpcprovider#wheatstalk-cdk-ecs-keycloak-vpcprovider-fromvpc)(), [VpcProvider](#wheatstalk-cdk-ecs-keycloak-vpcprovider).[ingressAndPrivateDbVpc](#wheatstalk-cdk-ecs-keycloak-vpcprovider#wheatstalk-cdk-ecs-keycloak-vpcprovider-ingressandprivatedbvpc)(), [VpcProvider](#wheatstalk-cdk-ecs-keycloak-vpcprovider).[ingressAndPrivateVpc](#wheatstalk-cdk-ecs-keycloak-vpcprovider#wheatstalk-cdk-ecs-keycloak-vpcprovider-ingressandprivatevpc)()
 
 Provides VpcInfo.
 
@@ -1547,7 +1580,7 @@ Props for `KeycloakEc2TaskDefinition`.
 
 Name | Type | Description 
 -----|------|-------------
-**executionRole**? | <code>[IRole](#aws-cdk-aws-iam-irole)</code> | The name of the IAM task execution role that grants the ECS agent to call AWS APIs on your behalf.<br/>__*Default*__: An execution role will be automatically created if you use ECR images in your task definition.
+**executionRole**? | <code>[IRole](#aws-cdk-aws-iam-irole)</code> | The name of the IAM task execution role that grants the ECS agent permission to call AWS APIs on your behalf.<br/>__*Default*__: An execution role will be automatically created if you use ECR images in your task definition.
 **family**? | <code>string</code> | The name of a family that this task definition is registered to.<br/>__*Default*__: Automatically generated name.
 **inferenceAccelerators**? | <code>Array<[InferenceAccelerator](#aws-cdk-aws-ecs-inferenceaccelerator)></code> | The inference accelerators to use for the containers in the task.<br/>__*Default*__: No inference accelerators.
 **ipcMode**? | <code>[IpcMode](#aws-cdk-aws-ecs-ipcmode)</code> | The IPC resource namespace to use for the containers in the task.<br/>__*Default*__: IpcMode used by the task is not specified
@@ -1571,7 +1604,8 @@ Props for `KeycloakFargateTaskDefinition`.
 Name | Type | Description 
 -----|------|-------------
 **cpu**? | <code>number</code> | The number of cpu units used by the task.<br/>__*Default*__: 256
-**executionRole**? | <code>[IRole](#aws-cdk-aws-iam-irole)</code> | The name of the IAM task execution role that grants the ECS agent to call AWS APIs on your behalf.<br/>__*Default*__: An execution role will be automatically created if you use ECR images in your task definition.
+**ephemeralStorageGiB**? | <code>number</code> | The amount (in GiB) of ephemeral storage to be allocated to the task.<br/>__*Default*__: 20
+**executionRole**? | <code>[IRole](#aws-cdk-aws-iam-irole)</code> | The name of the IAM task execution role that grants the ECS agent permission to call AWS APIs on your behalf.<br/>__*Default*__: An execution role will be automatically created if you use ECR images in your task definition.
 **family**? | <code>string</code> | The name of a family that this task definition is registered to.<br/>__*Default*__: Automatically generated name.
 **keycloak**? | <code>[KeycloakContainerExtensionProps](#wheatstalk-cdk-ecs-keycloak-keycloakcontainerextensionprops)</code> | Keycloak configuration.<br/>__*Optional*__
 **memoryLimitMiB**? | <code>number</code> | The amount (in MiB) of memory used by the task.<br/>__*Default*__: 512
